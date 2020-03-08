@@ -3,14 +3,15 @@ configuration FirstDomainController
     # Import the modules needed to run the DSC script
     Import-DscResource -ModuleName 'xActiveDirectory'
     Import-DscResource -ModuleName 'xStorage'
-    Import-DscResource -ModuleName 'xPendingReboot'
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
+    Import-DscResource -ModuleName 'ComputerManagementDsc'
  
     # When using with Azure Automation, modify these values to match your stored credential names
     $DomainAdminCredential = Get-AutomationPSCredential -Name 'domainCredential'
     $SafeModePassword = Get-AutomationPSCredential -Name 'safeModeCredential'
     $DomainName = Get-AutomationVariable -Name 'DomainName'
- 
+    $hostname = hostname
+    
     # Configuration
     node localhost
     {
@@ -34,10 +35,9 @@ configuration FirstDomainController
             DependsOn = '[xWaitforDisk]Disk3'
             FSLabel = 'Domain'
         }
- 
-        xPendingReboot BeforeDC
+        PendingReboot RebootBeforeDC
         {
-            Name = 'BeforeDC'
+            Name = 'RebootBeforeDC'
             SkipCcmClientSDK = $true
             DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF'
         }
@@ -50,7 +50,7 @@ configuration FirstDomainController
             DatabasePath = 'F:\NTDS'
             LogPath = 'F:\NTDS'
             SysvolPath = 'F:\SYSVOL'
-            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF','[xPendingReboot]BeforeDC'
+            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF','[PendingReboot]RebootBeforeDC'
         }
  
         Registry DisableRDPNLA

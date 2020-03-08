@@ -3,15 +3,15 @@ configuration OtherDomainController
     # Import the modules needed to run the DSC script
     Import-DscResource -ModuleName 'xActiveDirectory'
     Import-DscResource -ModuleName 'xStorage'
-    Import-DscResource -ModuleName 'xPendingReboot'
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
     Import-DscResource -ModuleName 'ComputerManagementDsc'
+    Import-DscResource -ModuleName 'xDSCDomainJoin'
  
     # When using with Azure Automation, modify these values to match your stored credential names
-    $DomainAdminCredential = Get-AutomationPSCredential -Name 'domainJoinCredential'
+    $DomainJoinCredential = Get-AutomationPSCredential -Name 'domainJoinCredential'
+    $DomainCredential = Get-AutomationPSCredential -Name 'domainCredential'
     $SafeModePassword = Get-AutomationPSCredential -Name 'safeModeCredential'
     $DomainName = Get-AutomationVariable -Name 'DomainName'
-    $hostname = $env:computername
  
     # Configuration
     node localhost
@@ -36,28 +36,28 @@ configuration OtherDomainController
             DependsOn = '[xWaitforDisk]Disk3'
             FSLabel = 'Domain'
         }
-        Computer JoinDomain
+        xDSCDomainjoin JoinDomain
         {
-            Name       = $hostname
-            DomainName = $DomainName
-            Credential = $DomainAdminCredential # Credential to join to domain
+            Domain = $DomainName 
+            Credential = $domainJoinCredential
         }
-        xPendingReboot BeforeDC
+        <#PendingReboot AfterDomainJoin
         {
-            Name = 'BeforeDC'
+            Name = 'AfterDomainJoin'
             SkipCcmClientSDK = $true
-            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF',"[Computer]JoinDomain"
-        }
+            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF','[Computer]JoinDomain'
+        }#>
  
         xADDomain Domain
         {
             DomainName = $DomainName
-            DomainAdministratorCredential = $DomainAdminCredential
+            DomainAdministratorCredential = $DomainCredential
             SafemodeAdministratorPassword = $SafeModePassword
             DatabasePath = 'F:\NTDS'
             LogPath = 'F:\NTDS'
             SysvolPath = 'F:\SYSVOL'
-            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF','[xPendingReboot]BeforeDC'
+            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF'
+            #'[PendingReboot]AfterDomainJoin'
         }
  
         Registry DisableRDPNLA
