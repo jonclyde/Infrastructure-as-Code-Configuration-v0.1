@@ -1,4 +1,4 @@
-configuration DSC_AD_Domain
+configuration FirstDomainController
 {
     # Import the modules needed to run the DSC script
     Import-DscResource -ModuleName 'xActiveDirectory'

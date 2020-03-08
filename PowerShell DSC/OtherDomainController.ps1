@@ -1,4 +1,4 @@
-configuration OtherDC
+configuration OtherDomainController
 {
     # Import the modules needed to run the DSC script
     Import-DscResource -ModuleName 'xActiveDirectory'
