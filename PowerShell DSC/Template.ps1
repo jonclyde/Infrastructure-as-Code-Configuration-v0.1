@@ -1,4 +1,4 @@
-Configuration ServerConfiguration {
+Configuration Template {
    
     # Template DSC Resources
     Import-DscResource -ModuleName 'PsDesiredStateConfiguration'
