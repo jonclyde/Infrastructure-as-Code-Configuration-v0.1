@@ -10,7 +10,6 @@ configuration FirstDomainController
     $DomainAdminCredential = Get-AutomationPSCredential -Name 'domainCredential'
     $SafeModePassword = Get-AutomationPSCredential -Name 'safeModeCredential'
     $DomainName = Get-AutomationVariable -Name 'DomainName'
-    $hostname = hostname
     
     # Configuration
     node localhost
