@@ -10,7 +10,6 @@ Configuration Management {
 
     #Template variables
     $DomainJoinCredential = Get-AutomationPSCredential -Name 'domainJoinCredential'
-    $SafeModePassword = Get-AutomationPSCredential -Name 'safeModeCredential'
     $DomainName = Get-AutomationVariable -Name 'DomainName'
 
     #Specific variables

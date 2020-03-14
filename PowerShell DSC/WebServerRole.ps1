@@ -1,7 +1,16 @@
 Configuration WebServerRole {
 
-    # Import the module that contains the resources we're using.
-    Import-DscResource -ModuleName PsDesiredStateConfiguration
+     # Template DSC Resources
+     Import-DscResource -ModuleName 'PsDesiredStateConfiguration'
+     Import-DscResource -ModuleName 'ComputerManagementDsc'
+     Import-DscResource -ModuleName 'xDSCDomainJoin'
+ 
+     #Specific DSC resources
+ 
+ 
+     #Template variables
+     $DomainJoinCredential = Get-AutomationPSCredential -Name 'domainJoinCredential'
+     $DomainName = Get-AutomationVariable -Name 'DomainName'
 
     # The Node statement specifies which targets this configuration will be applied to.
     Node 'localhost' {
@@ -10,6 +19,14 @@ Configuration WebServerRole {
         WindowsFeature WebServer {
             Ensure = "Present"
             Name =  "Web-Server"
+        }
+        #
+        #   Domain Join
+        #
+        xDSCDomainjoin JoinDomain
+        {
+            Domain = $DomainName
+            Credential = $domainjoinCredential
         }
     }
 } 
