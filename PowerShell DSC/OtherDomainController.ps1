@@ -21,7 +21,14 @@ configuration OtherDomainController
             Ensure = 'Present'
             Name = 'AD-Domain-Services'
         }
- 
+        
+        WindowsFeature RSATTools 
+        { 
+            Ensure = 'Present'
+            Name = 'RSAT-AD-Tools'
+            IncludeAllSubFeature = $true
+        }
+
         xWaitforDisk Disk3
         {
             DiskId = 3
