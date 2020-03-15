@@ -126,7 +126,7 @@ Configuration CustomStates {
         xADDomain Domain
         {
             DomainName = $DomainName
-            DomainAdministratorCredential = $DomainCredential
+            DomainAdministratorCredential = $DomainAdminCredential
             SafemodeAdministratorPassword = $SafeModePassword
             DatabasePath = 'F:\NTDS'
             LogPath = 'F:\NTDS'
