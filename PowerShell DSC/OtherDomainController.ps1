@@ -54,6 +54,14 @@ configuration OtherDomainController
             SkipCcmClientSDK = $true
             DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF','[Computer]JoinDomain'
         }#>
+        xWaitForADDomain 'DscForestWait'
+        {
+            DomainName           = $DomainName
+            DomainUserCredential = $domainJoinCredential
+            RetryCount           = 10
+            RetryIntervalSec     = 30
+            DependsOn            = '[WindowsFeature]ADDSInstall'
+        }
  
         xADDomain Domain
         {
@@ -63,10 +71,10 @@ configuration OtherDomainController
             DatabasePath = 'F:\NTDS'
             LogPath = 'F:\NTDS'
             SysvolPath = 'F:\SYSVOL'
-            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF'
+            DependsOn = '[WindowsFeature]ADDSInstall','[xDisk]DiskF','[xWaitForADDomain]DscForestWait'
             #'[PendingReboot]AfterDomainJoin'
         }
- 
+        
         Registry DisableRDPNLA
         {
             Key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp'
